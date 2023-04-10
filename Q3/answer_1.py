@@ -2,7 +2,7 @@
 # @Author: E-NoR
 # @Date:   2023-04-10 22:00:05
 # @Last Modified by:   E-NoR
-# @Last Modified time: 2023-04-11 01:33:11
+# @Last Modified time: 2023-04-11 02:28:10
 from datetime import datetime
 from logging import (INFO, FileHandler, Formatter, Logger, StreamHandler,
                      getLogger)
@@ -22,18 +22,17 @@ except ImportError:
     from webdriver_manager.chrome import ChromeDriverManager
 
 PATH = "Q3/screenshot"
+LOG_PATH = "Q3/selenium.log"
 
-
-def setup_logger(logger_name: str, log_file: str = None, level: int = INFO) -> Logger:
+def setup_logger(logger_name: str, level: int = INFO) -> Logger:
     logger = getLogger(logger_name)
     logger.setLevel(level)
 
     formatter = Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    if log_file:
-        file_handler = FileHandler(log_file)
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
+    file_handler = FileHandler(LOG_PATH)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
 
     console_handler = StreamHandler()
     console_handler.setFormatter(formatter)
@@ -43,7 +42,7 @@ def setup_logger(logger_name: str, log_file: str = None, level: int = INFO) -> L
 
 
 def main() -> None:
-    logger = setup_logger("selenium", "Q3/selenium.log")
+    logger = setup_logger("selenium")
     logger.info("{:=^{length}}".format(" start ", length=35))
     chrome_driver_path = ChromeDriverManager(path=getcwd()).install()
     get_date = lambda: datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
