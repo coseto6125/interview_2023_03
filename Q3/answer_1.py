@@ -2,9 +2,10 @@
 # @Author: E-NoR
 # @Date:   2023-04-10 22:00:05
 # @Last Modified by:   E-NoR
-# @Last Modified time: 2023-04-11 01:26:42
+# @Last Modified time: 2023-04-11 01:33:11
 from datetime import datetime
-from logging import INFO, FileHandler, Formatter, StreamHandler, getLogger
+from logging import (INFO, FileHandler, Formatter, Logger, StreamHandler,
+                     getLogger)
 from os import getcwd, listdir, system
 
 from selenium.webdriver import Chrome
@@ -23,7 +24,7 @@ except ImportError:
 PATH = "Q3/screenshot"
 
 
-def setup_logger(logger_name, log_file, level=INFO):
+def setup_logger(logger_name: str, log_file: str = None, level: int = INFO) -> Logger:
     logger = getLogger(logger_name)
     logger.setLevel(level)
 
@@ -82,19 +83,19 @@ def main() -> None:
                 for index, tab in enumerate(credit_tag, 1):
                     if tab.text:
                         logger.info(f"       tab與截圖 - {tab.text}")
-                    if index < len_tag: # 最後一個tab不點擊,避免跳到search bar 造成卡片介紹無法點擊
+                    if index < len_tag:  # 最後一個tab不點擊,避免跳到search bar 造成卡片介紹無法點擊
                         tab.send_keys(Keys.TAB)
                     driver.get_screenshot_as_file(f"{PATH}/creadit_card_tab_list/{index}_{get_date()}.png")
             case "6":
                 wait2click(v, False)
                 suspend = driver.find_elements(By.XPATH, v)
-                wait2click(v2:=v.replace("[5]", "[6]"), False)
+                wait2click(v2 := v.replace("[5]", "[6]"), False)
                 suspend += driver.find_elements(By.XPATH, v2)
                 for index, card in enumerate(suspend, 1):
                     card.click()
                     driver.get_screenshot_as_file(f"{PATH}/suspend_credit_card/{index}_{get_date()}.png")
                 try:
-                    screenshot_num,suspend_num = len(listdir(f"{PATH}/suspend_credit_card/")),len(suspend)
+                    screenshot_num, suspend_num = len(listdir(f"{PATH}/suspend_credit_card/")), len(suspend)
                     assert screenshot_num == suspend_num, f"驗證(停發)信用卡數量與截圖數量{suspend_num=},{screenshot_num=}"
                 except AssertionError as e:
                     logger.error(str(e))
